@@ -71,8 +71,21 @@ The behavior of this handler is controlled by global variables, which are set by
 
 Echidna typically detects the bug within 5 minutes using a single worker. The sequence leading to the hacks can be seen below.
 ```
-TODO
+testProfit(): failed!💥
+  Call sequence, shrinking 1739/5000:
+    Fuzz.setReentrancyAmount(62297794394773161987899947455086967966)
+    Fuzz.addLiquidity(287947091533324425929789050717863786957)
+    Fuzz.removeLiquidity(209948338645151591393209938770631982993)
+    Fuzz.addLiquidity(58576701019271218016466182754478192010)
+    Fuzz.removeLiquidity(967)
+    Fuzz.setReentrancyEnabled(false)
+    Fuzz.removeLiquidity(247696123990480820083721037276151777885)
+    Fuzz.testProfit()
+
+emit AssertGteFail(«Invalid: 1000000000000000000000000<1001205683176915736170634 failed, reason: Profit test»)
 ```
+
+Total profit: `1205683176915736170634` (1205 ETH).
 
 ## Future Research
 The current Proof of Concept is deliberately kept simple to optimize for fuzzing. Enhancing it to resemble a more comprehensive fuzzing suite could include:
@@ -85,4 +98,5 @@ While these additions would increase the complexity and slow down the fuzzing pr
 ## Links
 - https://medium.com/rektify-ai/the-vyper-compiler-saga-unraveling-the-reentrancy-bug-that-shook-defi-86ade6c54265
 - https://hackmd.io/@LlamaRisk/BJzSKHNjn
--
+- https://github.com/SunWeb3Sec/DeFiHackLabs/blob/main/src/test/2023-07/Curve_exp01.sol
+
