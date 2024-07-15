@@ -4,6 +4,10 @@ import {FuzzSetup} from "./FuzzSetup.sol";
 contract Fuzz is FuzzSetup {
     bool performReentrancy = false;
 
+    bool reentrancyEnabled;
+    uint8 reentrancyFunction;
+    uint256 reentrancyAmount;
+
     constructor() payable FuzzSetup() {}
 
     function testProfit() public {
@@ -34,6 +38,29 @@ contract Fuzz is FuzzSetup {
 
         pool.remove_liquidity(_amount, amount);
     }
+
+    function updateReentrancy(
+        bool _reentrancyEnabled,
+        uint8 _reentrancyFunction,
+        uint256 _reentrancyAmount
+    ) public {
+        reentrancyEnabled = _reentrancyEnabled;
+        reentrancyFunction = _reentrancyFunction;
+        reentrancyAmount = _reentrancyAmount;
+    }
+
+    receive() external payable {
+        if (reentrancyEnabled) {
+            uint256 functionId = (reentrancyFunction == 1) ? 0 : 1;
+
+            if (reentrancyFunction == 0) {
+                addLiquidity(reentrancyAmount);
+            } else if (reentrancyFunction == 1) {
+                removeLiquidity(reentrancyAmount);
+            }
+        }
+    }
+
     // function replayHack() public {
     //     uint256 balance = address(this).balance;
     //     log("initial balance", balance);
