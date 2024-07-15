@@ -12,7 +12,7 @@ contract Fuzz is FuzzBase {
 
     uint256 initialBalance;
 
-    bool reentrancyEnabled;
+    bool reentrancyEnabled = true;
     uint8 reentrancyFunction;
     uint128 reentrancyAmount;
 
@@ -55,13 +55,15 @@ contract Fuzz is FuzzBase {
         pool.remove_liquidity(_amount, amount);
     }
 
-    function updateReentrancy(
-        bool _reentrancyEnabled,
-        uint8 _reentrancyFunction,
-        uint128 _reentrancyAmount
-    ) public {
+    function setReentrancyEnabled(bool _reentrancyEnabled) public {
         reentrancyEnabled = _reentrancyEnabled;
+    }
+
+    function setReentrancyFunction(uint8 _reentrancyFunction) public {
         reentrancyFunction = _reentrancyFunction;
+    }
+
+    function setReentrancyAmount(uint128 _reentrancyAmount) public {
         reentrancyAmount = _reentrancyAmount;
     }
 
