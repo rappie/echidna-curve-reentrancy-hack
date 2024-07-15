@@ -25,6 +25,15 @@ contract Fuzz is FuzzSetup {
         pool.add_liquidity{value: _amount}(amount, 0);
     }
 
+    function removeLiquidity(uint256 _amount) public {
+        _amount = clampBetween(_amount, 0, pool.balanceOf(address(this)));
+
+        uint256[2] memory amount;
+        amount[0] = 0;
+        amount[1] = 0;
+
+        pool.remove_liquidity(_amount, amount);
+    }
     // function replayHack() public {
     //     uint256 balance = address(this).balance;
     //     log("initial balance", balance);
