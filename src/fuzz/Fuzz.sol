@@ -5,6 +5,10 @@ contract Fuzz is FuzzSetup {
     constructor() payable FuzzSetup() {}
 
     function testSomething() public {
-        t(false, "testSomething");
+		uint256 balance = address(this).balance;
+        log("initial balance", balance);
+
+
+		t(false, "done");
     }
 }
