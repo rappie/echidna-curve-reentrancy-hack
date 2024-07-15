@@ -1,4 +1,4 @@
-workers: 1
+workers: 4
 symExec: false
 
 testMode: assertion
@@ -8,6 +8,8 @@ corpusDir: echidna-corpus
 
 testLimit: 10000000 # 10M
 balanceContract: 1000000000000000000000000
+
+seqLen: 100
 
 rpcUrl: "https://eth.llamarpc.com" 
 rpcBlock: 17806055 
