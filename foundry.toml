@@ -4,3 +4,7 @@ out = "out"
 libs = ["lib"]
 
 rpc_endpoints = { mainnet = "https://eth.llamarpc.com" }
+
+remappings = [
+    'fuzzlib=lib/fuzzlib/src/',
+]
