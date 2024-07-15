@@ -69,7 +69,7 @@ The behavior of this handler is controlled by global variables, which are set by
     }
 ```
 
-Echidna typically detects the bug within 5 minutes using a single worker. The sequence leading to the hacks can be seen below.
+Echidna typically detects the bug within 5 minutes on a single worker. The sequence leading to the hack can be seen below.
 ```
 testProfit(): failed!💥
   Call sequence, shrinking 1739/5000:
