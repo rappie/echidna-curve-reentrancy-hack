@@ -5,11 +5,9 @@ import {Test, console} from "forge-std/Test.sol";
 
 import {ICurve} from "src/interfaces/ICurve.sol";
 import {WETH9} from "src/interfaces/WETH9.sol";
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
 
 contract HackTest is Test {
     WETH9 WETH = WETH9(payable(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2));
-    IERC20 pETH = IERC20(0x836A808d4828586A69364065A1e064609F5078c7);
     ICurve pool = ICurve(0x9848482da3Ee3076165ce6497eDA906E66bB85C5);
 
     bool performReentrancy = false;
