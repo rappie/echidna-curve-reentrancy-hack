@@ -1,7 +1,7 @@
 # Curve Hack - Fuzzing Reproduction
 
 ## Description
-This repository contains a reproduction of one of the Curve reentrancy hacks caused by a compiler issue in Vyper. Assets stolen from the Curve pools exceeded $41 million. For more details, refer to the [Vyper compiler saga](https://medium.com/rektify-ai/the-vyper-compiler-saga-unraveling-the-reentrancy-bug-that-shook-defi-86ade6c54265) on Rekt.
+This repository contains a reproduction of one of the Curve reentrancy hacks caused by a compiler issue in Vyper. Assets stolen from the Curve pools exceeded $41 million. For more details, refer to [this](https://rekt.news/curve-vyper-rekt/) article on Rekt.
 
 ## Methodology
 To reproduce the bug, we utilize Echidna's on-chain fuzzing. 
@@ -96,7 +96,7 @@ The current Proof of Concept is deliberately kept simple to optimize for fuzzing
 While these additions would increase the complexity and slow down the fuzzing process due to a larger search space, they would still effectively reproduce the hack.
 
 ## Links
-- https://medium.com/rektify-ai/the-vyper-compiler-saga-unraveling-the-reentrancy-bug-that-shook-defi-86ade6c54265
+- https://rekt.news/curve-vyper-rekt/
 - https://hackmd.io/@LlamaRisk/BJzSKHNjn
 - https://github.com/SunWeb3Sec/DeFiHackLabs/blob/main/src/test/2023-07/Curve_exp01.sol
 
