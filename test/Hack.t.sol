@@ -3,7 +3,7 @@ pragma solidity ^0.8;
 
 import {Test, console} from "forge-std/Test.sol";
 
-import {ICurve} from "src/ICurve.sol";
+import {ICurve} from "src/interfaces/ICurve.sol";
 
 
 contract HackTest is Test {
