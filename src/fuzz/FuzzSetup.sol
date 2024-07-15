@@ -10,8 +10,12 @@ contract FuzzSetup is FuzzBase {
     WETH9 WETH = WETH9(payable(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2));
     ICurve pool = ICurve(0x9848482da3Ee3076165ce6497eDA906E66bB85C5);
 
+	uint256 initialBalance;
+
     constructor() FuzzBase() {
         vm.roll(17806055);
         vm.warp(1690722623);
+
+		initialBalance = address(this).balance;
     }
 }

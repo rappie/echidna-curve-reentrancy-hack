@@ -6,6 +6,15 @@ contract Fuzz is FuzzSetup {
 
     constructor() payable FuzzSetup() {}
 
+    function testProfit() public {
+        uint256 balance = address(this).balance;
+
+        log("initial balance", initialBalance);
+        log("current balance", balance);
+
+        eq(initialBalance, balance, "Profit test");
+    }
+
     function replayHack() public {
         uint256 balance = address(this).balance;
         log("initial balance", balance);
@@ -27,8 +36,6 @@ contract Fuzz is FuzzSetup {
 
         log("final balance", address(this).balance);
         log("profit", address(this).balance - balance);
-
-        t(false, "done");
     }
 
     receive() external payable {
