@@ -25,11 +25,6 @@ contract Fuzz is FuzzBase {
 
     function testProfit() public {
         uint256 balance = address(this).balance;
-
-        log("initial balance", initialBalance);
-        log("current balance", balance);
-
-        // eq(initialBalance, balance, "Profit test");
         gte(initialBalance, balance, "Profit test");
     }
 
