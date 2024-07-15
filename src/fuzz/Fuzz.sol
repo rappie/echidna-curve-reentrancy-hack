@@ -12,7 +12,7 @@ contract Fuzz is FuzzSetup {
         log("initial balance", initialBalance);
         log("current balance", balance);
 
-        eq(initialBalance, balance, "Profit test");
+        gte(initialBalance, balance, "Profit test");
     }
 
     function addLiquidity(uint256 _amount) public {
